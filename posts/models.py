@@ -7,3 +7,6 @@ class Post(models.Model):
   corpo = models.TextField()
   criado = models.DateTimeField(auto_now_add = True)
   editado = models.DateTimeField(auto_now = True)
+
+  def __str__(self) -> str:
+    return self.titulo
