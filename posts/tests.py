@@ -1,5 +1,5 @@
 from django.test import TestCase
-from .models import Post
+from .models import Category, Post
 from http import HTTPStatus
 # Create your tests here.
 
@@ -18,14 +18,12 @@ class PostModelTest(TestCase):
 
 class HomepageTest(TestCase):
   def setUp(self) -> None:
-    Post.objects.create(
+    post = Post.objects.create(
       titulo = "Post 1",
-      corpo = "Enim diam vulputate ut pharetra. Facilisis mauris sit amet massa vitae tortor condimentum. Pretium viverra suspendisse potenti nullam ac. Amet est placerat in egestas. Mauris augue neque gravida in fermentum et sollicitudin. Amet facilisis magna etiam tempor orci eu lobortis."
+      corpo = "Enim diam vulputate ut pharetra. Facilisis mauris sit amet massa vitae tortor condimentum. Pretium viverra suspendisse potenti nullam ac. Amet est placerat in egestas. Mauris augue neque gravida in fermentum et sollicitudin. Amet facilisis magna etiam tempor orci eu lobortis.",
     )
-    Post.objects.create(
-      titulo = "Post 2",
-      corpo = "Enim diam vulputate ut pharetra. Facilisis mauris sit amet massa vitae tortor condimentum. Pretium viverra."
-    )
+    category = Category.objects.create(nome='comida')
+    post.category.add(category)
   
   def test_homepage_retorna_response_template_correto(self):
     
@@ -37,4 +35,28 @@ class HomepageTest(TestCase):
     response = self.client.get('/')
 
     self.assertContains(response, "Post 1")
-    self.assertContains(response, "Post 2")
+
+  def test_homepage_retorna_categoria(self):
+    response = self.client.get('/')
+
+    self.assertContains(response, "comida")
+
+class DetailpageTest(TestCase):
+    def setUp(self) -> None:
+      self.post = Post.objects.create(
+        titulo = "Detalhes post teste",
+        corpo = " labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum"
+      )
+    
+    def test_pagedetalhe_retorna_response_correta(self):
+      response = self.client.get(self.post.get_absolute_url())
+      
+      self.assertEqual(response.status_code, HTTPStatus.OK)
+      self.assertTemplateUsed(response, 'posts/detail.html')
+    
+    def test_detailpage_retorna_conteudo_correto(self):
+      response = self.client.get(self.post.get_absolute_url())
+
+      self.assertContains(response, self.post.titulo)
+      self.assertContains(response, self.post.corpo)
+

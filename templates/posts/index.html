@@ -1,27 +1,23 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends 'base.html' %}
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
-</head>
-
-<body>
-  <h1>Home</h1>
-  <h2>Latest posts!</h2>
-  <br>
-  <br>
-  {% for post in posts %}
-  <a href="">
-    <h4>
+{%block content %}
+<h1>Home</h1>
+<h2>Latest posts!</h2>
+<br>
+<br>
+{% for post in posts %}
+<a href="">
+  <h4>
+    <a href="{{post.get_absolute_url}}">
       {{post.titulo}}
-    </h4>
-  </a>
-  <p>
-    {{post.corpo|truncatewords:35}}
-  </p>
-  {% endfor %}
-</body>
-
-</html>
+    </a>
+  </h4>
+  <!--{% for category in post.category.all %}{{ category }}{% endfor %}-->
+  <p>{% for category in post.category.all %}{{ category }}{% endfor %}</p>
+</a>
+<p>
+  {{post.corpo|truncatewords:35}}
+</p>
+<hr>
+{% endfor %}
+{% endblock content %}
