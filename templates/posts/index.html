@@ -7,17 +7,23 @@
 <br>
 {% for post in posts %}
 <a href="">
-  <h4>
-    <a href="{{post.get_absolute_url}}">
-      {{post.titulo}}
-    </a>
-  </h4>
-  <!--{% for category in post.category.all %}{{ category }}{% endfor %}-->
-  <p>{% for category in post.category.all %}{{ category }}{% endfor %}</p>
+    <h4>
+        <a href="{{post.get_absolute_url}}">
+            {{post.titulo}}
+        </a>
+    </h4>
+    <!--{% for category in post.category.all %}{{ category }}{% endfor %}-->
+    <p>{% for category in post.category.all %}{{ category }}{% endfor %}</p>
 </a>
 <p>
-  {{post.corpo|truncatewords:35}}
+    {{post.corpo|truncatewords:35}}
 </p>
 <hr>
 {% endfor %}
+<!--
+    {% for category in categories %}
+    <h5>{{category}}</h5>
+    {% endfor %}
+-->
+
 {% endblock content %}

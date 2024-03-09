@@ -1,6 +1,8 @@
 from django.test import TestCase
 from .models import Category, Post
 from http import HTTPStatus
+from django.urls import reverse
+from model_bakery import baker
 # Create your tests here.
 
 class PostModelTest(TestCase):
@@ -10,20 +12,16 @@ class PostModelTest(TestCase):
     self.assertEqual(posts, 0)
   
   def test_string_rep_object(self):
-    post = Post.objects.create(
-          titulo="Teste titulo",
-          corpo= "Teste corpo"
-    )
-    self.assertEqual(str(post), post.titulo)
+    post = baker.make(Post)
 
+    self.assertEqual(str(post), post.titulo)
+    self.assertTrue(isinstance(post, Post))
+    
 class HomepageTest(TestCase):
   def setUp(self) -> None:
-    post = Post.objects.create(
-      titulo = "Post 1",
-      corpo = "Enim diam vulputate ut pharetra. Facilisis mauris sit amet massa vitae tortor condimentum. Pretium viverra suspendisse potenti nullam ac. Amet est placerat in egestas. Mauris augue neque gravida in fermentum et sollicitudin. Amet facilisis magna etiam tempor orci eu lobortis.",
-    )
+    self.post1 = baker.make(Post)
     category = Category.objects.create(nome='comida')
-    post.category.add(category)
+    self.post1.category.add(category)
   
   def test_homepage_retorna_response_template_correto(self):
     
@@ -34,19 +32,16 @@ class HomepageTest(TestCase):
   def test_homepage_retorna_lista(self):
     response = self.client.get('/')
 
-    self.assertContains(response, "Post 1")
+    self.assertContains(response, self.post1.titulo)
 
   def test_homepage_retorna_categoria(self):
-    response = self.client.get('/')
+    response = self.client.get(reverse('home'))
 
-    self.assertContains(response, "comida")
+    self.assertContains(response, 'comida')
 
 class DetailpageTest(TestCase):
     def setUp(self) -> None:
-      self.post = Post.objects.create(
-        titulo = "Detalhes post teste",
-        corpo = " labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum"
-      )
+      self.post = baker.make(Post)
     
     def test_pagedetalhe_retorna_response_correta(self):
       response = self.client.get(self.post.get_absolute_url())

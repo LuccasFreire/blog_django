@@ -3,7 +3,8 @@ from .models import Post, Category
 # Create your views here.
 def index(request):
   posts = Post.objects.all()
-  return render(request, 'posts/index.html', {'posts' : posts})
+  categories = Category.objects.all()
+  return render(request, 'posts/index.html', {'posts' : posts, 'categories' : categories})
 
 def post_detail(request,id):
   post = Post.objects.get(id = id)
